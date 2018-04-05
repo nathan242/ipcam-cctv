@@ -4,7 +4,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/config.php');
 
 if (isset($_GET['camera']) && $_GET['camera'] != '*') {
     $database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($_GET['camera']));
-    if ($database->result[0]) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+    if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
 } else {
     $config = new config($database);
 }

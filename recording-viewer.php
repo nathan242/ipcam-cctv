@@ -5,7 +5,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/config.php');
 $device = $_GET['camera'];
 
 $database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($device));
-if ($database->result[0]) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
 
 $pagetitle = 'Recordings for '.$device;
 include $_SERVER['DOCUMENT_ROOT'].'/include/header.php';

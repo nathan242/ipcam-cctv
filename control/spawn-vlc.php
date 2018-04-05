@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/../include/camera.php');
 $database->keep_connected = 0;
 
 $database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($argv[1]));
-if ($database->result[0]) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
 
 $device = new camera($database, $config->config_data, false, $argv[1]);
 if (!$device->device_data) {
