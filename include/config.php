@@ -8,6 +8,7 @@
             'recording_directory'=>'',
             'pid_directory'=>'',
             'log_directory'=>'',
+            'lock_directory'=>'',
             'retry_time_limit'=>'100',
             'retry_count'=>'3',
             'sleep_time'=>'10',

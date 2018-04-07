@@ -5,6 +5,10 @@
     $global = new config($database);
     $config = config::config_dump($database);
 
+    if (file_exists($global->config_data['lock_directory']."/remove-empty-files.lock")) { exit; }
+
+    touch($global->config_data['lock_directory']."/remove-empty-files.lock");
+
     foreach ($config as $cnf) {
         if (isset($cnf['recording_directory']) || isset($cnf['log_directory'])) {
             if (!isset($cnf['recording_directory'])) { $cnf['recording_directory'] = $global->config_data['recording_directory']; }
@@ -24,4 +28,6 @@
             }
         }
     }
+
+    unlink($global->config_data['lock_directory']."/remove-empty-files.lock");
 ?>

@@ -5,6 +5,10 @@
     $global = new config($database);
     $config = config::config_dump($database);
 
+    if (file_exists($global->config_data['lock_directory']."/remove-old-data.lock")) { exit; }
+
+    touch($global->config_data['lock_directory']."/remove-old-data.lock");
+
     foreach ($config as $cnf) {
         if (isset($cnf['recording_directory']) || isset($cnf['log_directory']) || isset($cnf['recording_device_limit'])) {
             if (!isset($cnf['recording_directory'])) { $cnf['recording_directory'] = $global->config_data['recording_directory']; }
@@ -15,6 +19,7 @@
             if ($used > $cnf['recording_device_limit']) {
                 $file = shell_exec("ls -1t ".$cnf['recording_directory']."/ | tail -n1");
                 $file = preg_replace('/\n/', '', $file);
+                if ($file == '') { continue; }
                 unlink($cnf['recording_directory']."/".$file);
                 echo "Removed old file: ".$file."\n";
                 $logfile = preg_replace('/\.[^\.]*$/', '.log', $file);
@@ -23,4 +28,6 @@
             }
         }
     }
+
+    unlink($global->config_data['lock_directory']."/remove-old-data.lock");
 ?>
