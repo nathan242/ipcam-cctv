@@ -75,7 +75,7 @@
         $config = new config($database);
         // Are any cameras active?
         $database->query('SELECT `id` FROM `devices`');
-        if (isset($database->result)) {
+        if (isset($database->result[0])) {
             $result = $database->result;
             foreach ($result as $row) {
                 $full_config = new config($database, $row['id']);
