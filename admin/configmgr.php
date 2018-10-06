@@ -11,7 +11,7 @@
             $device = false;
         }
 
-        if (!config::set($database, $device, $_POST['key'], $_POST['value'])) {
+        if (!config::set($db, $device, $_POST['key'], $_POST['value'])) {
             echo 'Error adding config!';
             exit();
         }
@@ -25,7 +25,7 @@
             $device = false;
         }
 
-        if (!config::del($database, $device, $_POST['key'])) {
+        if (!config::del($db, $device, $_POST['key'])) {
             echo 'Error deleting config!';
             exit();
         }
@@ -39,7 +39,7 @@
             $device = false;
         }
 
-        if (config::set($database, $device, $_POST['key'], $_POST['value'])) {
+        if (config::set($db, $device, $_POST['key'], $_POST['value'])) {
             exit('0');
         } else {
             exit('1');
@@ -51,9 +51,9 @@
 
     // Get devices
     $devices = array();
-    $database->query('SELECT DISTINCT `devices`.`id`, `devices`.`name`, `config`.`device` FROM `devices` LEFT JOIN `config` ON `config`.`device` = `devices`.`id`');
-    if (isset($database->result[0])) {
-        foreach ($database->result as $r) {
+    $db->query('SELECT DISTINCT `devices`.`id`, `devices`.`name`, `config`.`device` FROM `devices` LEFT JOIN `config` ON `config`.`device` = `devices`.`id`');
+    if (isset($db->result[0])) {
+        foreach ($db->result as $r) {
             if ($r['device'] != '') { $r['name'] .= '*'; }
             $devices[] = $r;
         }
@@ -63,23 +63,23 @@
     $running = '';
     $run_warn = '';
     if (isset($_GET['config']) && preg_match('/^[0-9]+/', $_GET['config']) && $_GET['config'] != 0) {
-        $config = new config($database, $_GET['config'], false);
-        $full_config = new config($database, $_GET['config']);
-        $device = new camera($database, $full_config->config_data, $_GET['config']);
+        $config = new config($db, $_GET['config'], false);
+        $full_config = new config($db, $_GET['config']);
+        $device = new camera($db, $full_config->config_data, $_GET['config']);
         if ($device->is_active()) {
             $running = ' disabled';
             $run_warn = 'This device is currently active.';
         }
     } else {
         $_GET['config'] = 0;
-        $config = new config($database);
+        $config = new config($db);
         // Are any cameras active?
-        $database->query('SELECT `id` FROM `devices`');
-        if (isset($database->result[0])) {
-            $result = $database->result;
+        $db->query('SELECT `id` FROM `devices`');
+        if (isset($db->result[0])) {
+            $result = $db->result;
             foreach ($result as $row) {
-                $full_config = new config($database, $row['id']);
-                $device = new camera($database, $full_config->config_data, $row['id']);
+                $full_config = new config($db, $row['id']);
+                $device = new camera($db, $full_config->config_data, $row['id']);
                 if ($device->is_active()) {
                     $running = ' disabled';
                     $run_warn = 'A device is currently active.';

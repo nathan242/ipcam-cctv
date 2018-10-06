@@ -3,10 +3,10 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/main.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/config.php');
 
 if (isset($_GET['camera']) && $_GET['camera'] != '*') {
-    $database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($_GET['camera']));
-    if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+    $db->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($_GET['camera']));
+    if (isset($db->result[0])) { $config = new config($db, $db->result[0]['id']); } else { $config = new config($db); }
 } else {
-    $config = new config($database);
+    $config = new config($db);
 }
 
 if (isset($_GET['video']) && file_exists($config->config_data['recording_directory'].'/'.basename($_GET['video']))) {
@@ -70,14 +70,14 @@ if (isset($_GET['video']) && file_exists($config->config_data['recording_directo
 	include $_SERVER['DOCUMENT_ROOT'].'/include/header.php';
 	echo '<p><a class="btn btn-default" href="/cctv.php">&lt&ltBACK</a></p>';
 	
-	$database->query("select `name` from devices");
-	if (isset($database->result[0])) {
+	$db->query("select `name` from devices");
+	if (isset($db->result[0])) {
 		echo '<p><form action="" method="get"><select name="camera" onchange="this.form.submit()"><option';
 		if (!isset($_GET['camera']) || empty($_GET['camera'])) {
 			echo ' selected';
 		}
 		echo '>*</option>';
-		foreach ($database->result as $row) {
+		foreach ($db->result as $row) {
 			echo '<option';
 			if (isset($_GET['camera']) && $_GET['camera'] == $row['name']) {
 				echo ' selected';

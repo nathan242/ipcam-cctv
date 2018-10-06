@@ -4,8 +4,8 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/config.php');
 
 $device = $_GET['camera'];
 
-$database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($device));
-if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+$db->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($device));
+if (isset($db->result[0])) { $config = new config($db, $db->result[0]['id']); } else { $config = new config($db); }
 
 $pagetitle = 'Recordings for '.$device;
 include $_SERVER['DOCUMENT_ROOT'].'/include/header.php';

@@ -2,8 +2,8 @@
     require_once(dirname(__FILE__).'/../control/config.php');
     require_once(dirname(__FILE__).'/../include/config.php');
 
-    $global = new config($database);
-    $config = config::config_dump($database);
+    $global = new config($db);
+    $config = config::config_dump($db);
 
     if (file_exists($global->config_data['lock_directory']."/remove-old-data.lock")) { exit; }
 

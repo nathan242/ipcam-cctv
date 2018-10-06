@@ -1,12 +1,12 @@
 <?php
 require_once(dirname(__FILE__).'/config.php');
 require_once(dirname(__FILE__).'/../include/camera.php');
-$database->keep_connected = 0;
+$db->keep_connected = 0;
 
-$database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($argv[1]));
-if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+$db->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($argv[1]));
+if (isset($db->result[0])) { $config = new config($db, $db->result[0]['id']); } else { $config = new config($db); }
 
-$device = new camera($database, $config->config_data, false, $argv[1]);
+$device = new camera($db, $config->config_data, false, $argv[1]);
 if (!$device->device_data) {
     echo "No Device Data! [".$argv[1]."]\n";
     exit();

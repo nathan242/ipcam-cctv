@@ -7,7 +7,7 @@ ul.topbar {
 	margin: 0;
 	padding: 0;
 	text-align: right;
-        background: #CCCCCC;
+        background: linear-gradient(grey, white);
 }
 
 li.topbar {
@@ -45,5 +45,18 @@ li.topbar {
 .percentbar div {
 	background: #0000FF;
 	height: 18px;
+}
+
+.panel-custom {
+	margin-left: 15px;
+        margin-right: 15px;
+}
+
+.login-panel {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+	width: 300px;
 }
 

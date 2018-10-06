@@ -17,7 +17,7 @@ function fail($code) {
 if (isset($_POST['id'])) {
 	$id = $_POST['id'];
         if (isset($_POST['delete'])) {
-            if (!$database->prepared_query('DELETE FROM `users` WHERE `id`=?', array('i'), array($id))) {
+            if (!$db->prepared_query('DELETE FROM `users` WHERE `id`=?', array('i'), array($id))) {
                 fail(2);
             } else {
                 header('Location: '.$_SERVER['HTTP_REFERER']);
@@ -32,14 +32,14 @@ if (isset($_POST['id'])) {
 		if ($password != '') {
 			$password = hash('sha256',$password);
 			if ($id == "new") {
-				if (!$database->prepared_query('INSERT INTO `users` (`username`, `password`, `enabled`) VALUES (?, ?, ?)', array('s','s','i'), array($username,$password,$enabled))) {
+				if (!$db->prepared_query('INSERT INTO `users` (`username`, `password`, `enabled`) VALUES (?, ?, ?)', array('s','s','i'), array($username,$password,$enabled))) {
 					fail(2);
 				} else {
 					header('Location: users.php');
 					exit;
 				}
 			} else {
-				if (!$database->prepared_query('UPDATE `users` SET `username`=?, `password`=?, `enabled`=? WHERE `id`=?', array('s','s','i','i'), array($username,$password,$enabled,$id))) {
+				if (!$db->prepared_query('UPDATE `users` SET `username`=?, `password`=?, `enabled`=? WHERE `id`=?', array('s','s','i','i'), array($username,$password,$enabled,$id))) {
 					fail(2);
 				} else {
 					header('Location: users.php');
@@ -48,7 +48,7 @@ if (isset($_POST['id'])) {
 			}
 		} else {
 			if ($id == "new") { fail(3); }
-			if (!$database->prepared_query('UPDATE `users` SET `username`=?, `enabled`=? WHERE `id`=?', array('s','i','i'), array($username,$enabled,$id))) {
+			if (!$db->prepared_query('UPDATE `users` SET `username`=?, `enabled`=? WHERE `id`=?', array('s','i','i'), array($username,$enabled,$id))) {
 				fail(2);
 			} else {
 				header('Location: users.php');
@@ -58,10 +58,10 @@ if (isset($_POST['id'])) {
 	}
 }
 
-if (isset($_GET['id']) && $database->prepared_query('select id, username, password, enabled from users where id=?', array('i'), array($_GET['id'])) && $database->result) {
-	$id = $database->result[0]['id'];
-	$username = $database->result[0]['username'];
-	$enabled = $database->result[0]['enabled'];
+if (isset($_GET['id']) && $db->prepared_query('select id, username, password, enabled from users where id=?', array('i'), array($_GET['id'])) && $db->result) {
+	$id = $db->result[0]['id'];
+	$username = $db->result[0]['username'];
+	$enabled = $db->result[0]['enabled'];
 } elseif (isset($_GET['new'])) {
 	$id = "new";
 	$username = "[NEW USER]";

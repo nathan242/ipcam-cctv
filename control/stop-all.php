@@ -2,10 +2,10 @@
 require_once(dirname(__FILE__).'/config.php');
 require_once(dirname(__FILE__).'/../include/camera.php');
 
-$database->query("select `id`,`name` from devices");
-$result = $database->result;
+$db->query("select `id`,`name` from devices");
+$result = $db->result;
 foreach ($result as $row) {
-    $config = new config($database, $row['id']);
+    $config = new config($db, $row['id']);
     if (file_exists($config->config_data['pid_directory'].'/'.$row['name'].'.pid')) {
         echo "Stopping ".$row['name']."\n";
         exec('touch '.$config->config_data['pid_directory'].'/'.$row['name'].'.norespawn');
@@ -17,7 +17,7 @@ foreach ($result as $row) {
             @unlink($config->config_data['pid_directory'].'/'.$row['name'].'.sleeppid');
             @unlink($config->config_data['pid_directory'].'/'.$row['name'].'.sleep');
             @unlink($config->config_data['pid_directory'].'/'.$row['name'].'.norespawn');
-            $device = new camera($database, $config->config_data, $row['id']);
+            $device = new camera($db, $config->config_data, $row['id']);
 	    $device->log_add('Device stopped.', 0);
         } else {
             exec('touch '.$config->config_data['pid_directory'].'/'.$row['name'].'.norespawn');

@@ -14,7 +14,7 @@ if (isset($_POST['add']) && isset($_POST['name']) && isset($_POST['ip_address'])
         'username'=>$_POST['username'],
         'password'=>$_POST['password']
         );
-    if (camera::create_camera($database, $data)) {
+    if (camera::create_camera($db, $data)) {
         header('Location: '.$_SERVER['HTTP_REFERER']);
         exit();
     } else {
@@ -26,8 +26,8 @@ if (isset($_POST['add']) && isset($_POST['name']) && isset($_POST['ip_address'])
 // Delete
 
 if (isset($_POST['delete']) && isset($_POST['id'])) {
-    $config = new config($database, $_POST['id']);
-    if (camera::delete_camera($database, $config->config_data, $_POST['id'])) {
+    $config = new config($db, $_POST['id']);
+    if (camera::delete_camera($db, $config->config_data, $_POST['id'])) {
         header('Location: '.$_SERVER['HTTP_REFERER']);
         exit();
     } else {
@@ -42,8 +42,8 @@ if (isset($_POST['edit']) && isset($_POST['id']) && isset($_POST['field']) && is
         exit('1');
     }
 
-    $config = new config($database, $_POST['id']);
-    $device = new camera($database, $config->config_data, $_POST['id']);
+    $config = new config($db, $_POST['id']);
+    $device = new camera($db, $config->config_data, $_POST['id']);
     if ($device->device_data === false || $device->is_active()) {
         // Camera does not exist or is running
         exit('1');
@@ -154,13 +154,13 @@ function update(field) {
     </tr>
 
 <?php
-$database->query("select `id` from devices");
+$db->query("select `id` from devices");
 $highlight = 0;
-if (isset($database->result[0])) {
-    $ids = $database->result;
+if (isset($db->result[0])) {
+    $ids = $db->result;
     foreach ($ids as $id) {
-        $config = new config($database, $id['id']);
-        $device = new camera($database, $config->config_data, $id['id']);
+        $config = new config($db, $id['id']);
+        $device = new camera($db, $config->config_data, $id['id']);
         if ($device->is_active()) {
             $running = ' disabled';
         } else {

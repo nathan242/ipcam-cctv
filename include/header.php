@@ -9,18 +9,15 @@
     }
 ?>
 <!doctype html>
-<head>
+  <head>
+    <link rel="stylesheet" href="/include/css/style.css">
+    <link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
+    <script src="/include/js/jquery-2.2.4.min.js"></script>
+    <script src="/include/bootstrap/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" href="/include/css/style.css">
-
-<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-<script src="/include/js/jquery-2.2.4.min.js"></script>
-<script src="/include/bootstrap/js/bootstrap.min.js"></script>
-
-<title><?php echo $pagetitle; ?></title>
-
-</head>
-<body>
+    <title><?php echo $pagetitle; ?></title>
+  </head>
+  <body>
 
 <?php if (isset($topbar)) {
     echo '<div class="topbar">';
@@ -32,5 +29,3 @@
     echo '<hr>';
     echo '</div>';
 }
-?>
-

@@ -3,7 +3,7 @@
 class camera {
 
     private $id = false;
-    private $database;
+    private $db;
     private $config;
 
     public $device_data;
@@ -11,18 +11,39 @@ class camera {
     //public static $valid_properties = array('id', 'name', 'ip_address', 'protocol', 'url', 'username', 'password');
     public static function get_valid_properties() { return  array('id', 'name', 'ip_address', 'protocol', 'url', 'username', 'password'); }
 
-    public static function create_camera(&$database, $data, $inst = false, $config = array()) {
+    public static function get_all(&$db) {
+        if (!$db->query(
+'SELECT
+    `id` AS `ID`,
+    `name` AS `NAME`,
+    `ip_address` AS `IP ADDRESS`,
+    `protocol` AS `PROTOCOL`,
+    `url` AS `URL`,
+    `username` AS `USERNAME`,
+    `password` AS `PASSWORD`
+FROM
+    `devices`'
+                )
+                || !isset($db->result[0])
+                ) {
+            return false;
+        }
+        
+        return $db->result;
+    }
+    
+    public static function create_camera(&$db, $data, $inst = false, $config = array()) {
         $fields = self::get_valid_properties();
         foreach ($fields as $f) {
             if ($f != 'id' && !array_key_exists($f, $data)) {
                 return false;
             }
         }
-        if (!$database->prepared_query("insert into `devices` (`name`, `ip_address`, `protocol`, `url`, `username`, `password`) values (?, ? ,?, ?, ?, ?)", array('s', 's', 's', 's', 's', 's'), array($data['name'], $data['ip_address'], $data['protocol'], $data['url'], $data['username'], $data['password']))) { return false; }
+        if (!$db->prepared_query("insert into `devices` (`name`, `ip_address`, `protocol`, `url`, `username`, `password`) values (?, ? ,?, ?, ?, ?)", array('s', 's', 's', 's', 's', 's'), array($data['name'], $data['ip_address'], $data['protocol'], $data['url'], $data['username'], $data['password']))) { return false; }
         if ($inst) {
-            if (!$database->query("select last_insert_id()")) { return false; }
-            if (isset($database->result[0]['last_insert_id()'])) {
-                return new camera($database, $config, $database->result[0]['last_insert_id()']);
+            if (!$db->query("select last_insert_id()")) { return false; }
+            if (isset($db->result[0]['last_insert_id()'])) {
+                return new camera($db, $config, $db->result[0]['last_insert_id()']);
             } else {
                 return false;
             }
@@ -30,26 +51,26 @@ class camera {
         return true;
     }
 
-    public static function delete_camera(&$database, $config, $id = false, $name = false) {
-        $device = new camera($database, $config, $id, $name);
+    public static function delete_camera(&$db, $config, $id = false, $name = false) {
+        $device = new camera($db, $config, $id, $name);
         if (!$device->device_data) { return false; }
         if ($device->is_active()) { return false; }
-        if (!$database->query("delete from `devices` where id=".$device->device_data['id'])) { return false; }
-        if (!$database->query("delete from `camera_log` where device=".$device->device_data['id'])) { return false; }
-        if (!$database->query("delete from `config` where device=".$device->device_data['id'])) { return false; }
+        if (!$db->query("delete from `devices` where id=".$device->device_data['id'])) { return false; }
+        if (!$db->query("delete from `camera_log` where device=".$device->device_data['id'])) { return false; }
+        if (!$db->query("delete from `config` where device=".$device->device_data['id'])) { return false; }
         return true;
     }
 
-    function __construct(&$database, $config, $id = false, $name = false) {
-        $this->database = $database;
+    function __construct(&$db, $config, $id = false, $name = false) {
+        $this->db = $db;
         $this->config = $config;
         if ($id !== false) {
-            $this->database->prepared_query("select `id` from `devices` where `id`=?",array("i"), array($id));
+            $this->db->prepared_query("select `id` from `devices` where `id`=?",array("i"), array($id));
         } elseif ($name !== false) {
-            $this->database->prepared_query("select `id` from `devices` where `name`=?",array("s"), array($name));
+            $this->db->prepared_query("select `id` from `devices` where `name`=?",array("s"), array($name));
         }
-        if (isset($this->database->result[0])) {
-            $this->id = $this->database->result[0]['id'];
+        if (isset($this->db->result[0])) {
+            $this->id = $this->db->result[0]['id'];
         }
 
         $this->refresh();
@@ -57,9 +78,9 @@ class camera {
 
     public function refresh() {
         if ($this->id !== false) {
-            $this->database->prepared_query("select `id`, `name`, `ip_address`, `protocol`, `url`, `username`, `password` from `devices` where `id`=?", array("i"), array($this->id));
-            if (isset($this->database->result[0])) {
-                $this->device_data = $this->database->result[0];
+            $this->db->prepared_query("select `id`, `name`, `ip_address`, `protocol`, `url`, `username`, `password` from `devices` where `id`=?", array("i"), array($this->id));
+            if (isset($this->db->result[0])) {
+                $this->device_data = $this->db->result[0];
             } else {
                 $this->device_data = false;
             }
@@ -70,7 +91,7 @@ class camera {
 
     public function update() {
         if ($this->id !== false) {
-            if ($this->database->prepared_query("update `devices` set `id`=?, `name`=?, `ip_address`=?, `protocol`=?, `url`=?, `username`=?, `password`=? where `id`=?", array('i','s','s','s','s','s','s','i'), array($this->device_data['id'], $this->device_data['name'], $this->device_data['ip_address'], $this->device_data['protocol'], $this->device_data['url'], $this->device_data['username'], $this->device_data['password'], $this->id))) {
+            if ($this->db->prepared_query("update `devices` set `id`=?, `name`=?, `ip_address`=?, `protocol`=?, `url`=?, `username`=?, `password`=? where `id`=?", array('i','s','s','s','s','s','s','i'), array($this->device_data['id'], $this->device_data['name'], $this->device_data['ip_address'], $this->device_data['protocol'], $this->device_data['url'], $this->device_data['username'], $this->device_data['password'], $this->id))) {
                 return true;
             } else {
                 return false;
@@ -145,14 +166,14 @@ class camera {
     }
 
     public function log_add($event, $status) {
-        if (!$this->database->prepared_query('insert into camera_log (`device`, `event`, `status`) values (?, ?, ?)', array('i', 's', 'i'), array($this->id, $event, $status))) {
-            echo "ERROR: Failed to insert into camera_log. (".$this->id.", ".$event.", ".$status.")\nMYSQL_ERROR: ".$this->database->last_error()."\n";
+        if (!$this->db->prepared_query('insert into camera_log (`device`, `event`, `status`) values (?, ?, ?)', array('i', 's', 'i'), array($this->id, $event, $status))) {
+            echo "ERROR: Failed to insert into camera_log. (".$this->id.", ".$event.", ".$status.")\nMYSQL_ERROR: ".$this->db->last_error()."\n";
         }
-        $this->database->query('select count(*) as `count` from camera_log');
-        $row = $this->database->result[0]['count'];
+        $this->db->query('select count(*) as `count` from camera_log');
+        $row = $this->db->result[0]['count'];
         $logdelete = $row - $this->config['camera_log_limit'];
         if ($logdelete > 0) {
-            $this->database->query('delete from camera_log order by timestamp asc limit '.$logdelete);
+            $this->db->query('delete from camera_log order by timestamp asc limit '.$logdelete);
         }
     }
 
@@ -183,11 +204,11 @@ class camera {
         }
 
         if (count($wheretype) > 0) {
-            $this->database->prepared_query("select `id`, `timestamp`, `event`, `status` from camera_log where device=".$this->id.$where." order by `timestamp` desc".$limit, $wheretype, $wheredata);
+            $this->db->prepared_query("select `id`, `timestamp`, `event`, `status` from camera_log where device=".$this->id.$where." order by `timestamp` desc".$limit, $wheretype, $wheredata);
         } else {
-            $this->database->query("select `id`, `timestamp`, `event`, `status` from camera_log where device=".$this->id." order by `timestamp` desc".$limit);
+            $this->db->query("select `id`, `timestamp`, `event`, `status` from camera_log where device=".$this->id." order by `timestamp` desc".$limit);
         }
-        return $this->database->result;
+        return $this->db->result;
     }
 
 }

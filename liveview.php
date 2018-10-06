@@ -6,10 +6,10 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/config.php');
 if (!isset($_GET['camera'])) { exit(); }
 
 
-$database->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($_GET['camera']));
-if (isset($database->result[0])) { $config = new config($database, $database->result[0]['id']); } else { $config = new config($database); }
+$db->prepared_query('select `id` from `devices` where `name`=?', array('s'), array($_GET['camera']));
+if (isset($db->result[0])) { $config = new config($db, $db->result[0]['id']); } else { $config = new config($db); }
 
-$device = new camera($database, $config->config_data ,false, $_GET['camera']);
+$device = new camera($db, $config->config_data ,false, $_GET['camera']);
 
 $videoaddr = $device->full_url();
 $pagetitle = $device->device_data['name'];

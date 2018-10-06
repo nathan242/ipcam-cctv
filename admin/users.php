@@ -45,8 +45,8 @@ function remove(id) {
 
 <?php
 
-$database->query('select id, username, password, enabled from users');
-foreach ($database->result as $row) {
+$db->query('select id, username, password, enabled from users');
+foreach ($db->result as $row) {
     echo '<tr>';
     echo '<td>'.$row['id'].'</td>';
     echo '<td>'.$row['username'].'</td>';
