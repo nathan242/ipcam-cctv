@@ -1,65 +1,76 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'].'/include/main.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/include/camera.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/control/config.php');
-
-// Add
-
-if (isset($_POST['add']) && isset($_POST['name']) && isset($_POST['ip_address']) && isset($_POST['protocol']) && isset($_POST['url']) && isset($_POST['username']) && isset($_POST['password'])) {
-    $data = array(
-        'name'=>$_POST['name'],
-        'ip_address'=>$_POST['ip_address'],
-        'protocol'=>$_POST['protocol'],
-        'url'=>$_POST['url'],
-        'username'=>$_POST['username'],
-        'password'=>$_POST['password']
-        );
-    if (camera::create_camera($db, $data)) {
-        header('Location: '.$_SERVER['HTTP_REFERER']);
-        exit();
-    } else {
-        echo "Error adding device!";
-        exit();
+    require_once 'include/inc.main.php';
+    
+    $add_form = new form('Add Camera', 'Add');
+    foreach (camera::get_valid_properties() as $field_name) {
+        $add_form->input($field_name,
+                strtoupper(preg_replace('/_/', ' ', $field_name)),
+                'text',
+                true,
+                false,
+                array());
     }
-}
+    
+    
+    // Add
 
-// Delete
-
-if (isset($_POST['delete']) && isset($_POST['id'])) {
-    $config = new config($db, $_POST['id']);
-    if (camera::delete_camera($db, $config->config_data, $_POST['id'])) {
-        header('Location: '.$_SERVER['HTTP_REFERER']);
-        exit();
-    } else {
-        echo "Error deleting device!";
-        exit();
-    }
-}
-
-// Update
-if (isset($_POST['edit']) && isset($_POST['id']) && isset($_POST['field']) && isset($_POST['value'])) {
-    if (!in_array($_POST['field'], camera::get_valid_properties())) {
-        exit('1');
+    if (isset($_POST['add']) && isset($_POST['name']) && isset($_POST['ip_address']) && isset($_POST['protocol']) && isset($_POST['url']) && isset($_POST['username']) && isset($_POST['password'])) {
+        $data = array(
+            'name'=>$_POST['name'],
+            'ip_address'=>$_POST['ip_address'],
+            'protocol'=>$_POST['protocol'],
+            'url'=>$_POST['url'],
+            'username'=>$_POST['username'],
+            'password'=>$_POST['password']
+            );
+        if (camera::create_camera($db, $data)) {
+            header('Location: '.$_SERVER['HTTP_REFERER']);
+            exit();
+        } else {
+            echo "Error adding device!";
+            exit();
+        }
     }
 
-    $config = new config($db, $_POST['id']);
-    $device = new camera($db, $config->config_data, $_POST['id']);
-    if ($device->device_data === false || $device->is_active()) {
-        // Camera does not exist or is running
-        exit('1');
+    // Delete
+
+    if (isset($_POST['delete']) && isset($_POST['id'])) {
+        $config = new config($db, $_POST['id']);
+        if (camera::delete_camera($db, $config->config_data, $_POST['id'])) {
+            header('Location: '.$_SERVER['HTTP_REFERER']);
+            exit();
+        } else {
+            echo "Error deleting device!";
+            exit();
+        }
     }
 
-    $device->device_data[$_POST['field']] = $_POST['value'];
-    if ($device->update() === false) {
-        exit('1');
-    } else {
-        exit('0');
-    }
-}
+    // Update
+    if (isset($_POST['edit']) && isset($_POST['id']) && isset($_POST['field']) && isset($_POST['value'])) {
+        if (!in_array($_POST['field'], camera::get_valid_properties())) {
+            exit('1');
+        }
 
-$pagepath = array(array('CCTV CONTROL', '/cctv.php'), array('CAMERA MANAGER', $_SERVER['REQUEST_URI']));
-$topbar = true;
-include $_SERVER['DOCUMENT_ROOT'].'/include/header.php';
+        $config = new config($db, $_POST['id']);
+        $device = new camera($db, $config->config_data, $_POST['id']);
+        if ($device->device_data === false || $device->is_active()) {
+            // Camera does not exist or is running
+            exit('1');
+        }
+
+        $device->device_data[$_POST['field']] = $_POST['value'];
+        if ($device->update() === false) {
+            exit('1');
+        } else {
+            exit('0');
+        }
+    }
+
+    $pagepath = array(array('CCTV CONTROL', '/cctv.php'), array('CAMERA MANAGER', $_SERVER['REQUEST_URI']));
+    $topbar = true;
+    require 'include/header.php';
+    
+    $add_form->html(true, true, true);
 ?>
 
 <script>
@@ -109,36 +120,7 @@ function update(field) {
 }
 </script>
 
-<p><a class="btn btn-default" href="/cctv.php">&lt&ltBACK</a></p>
 
-<p>ADD DEVICE:</p>
-
-<form action="" method="POST">
-<input type="hidden" name="add" value="1">
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>NAME</th>
-        <th>IP ADDRESS</th>
-        <th>PROTOCOL</th>
-        <th>URL</th>
-        <th>USERNAME</th>
-        <th>PASSWORD</th>
-    </tr>
-    <tr>
-        <td>#</td>
-        <td><input type="text" name="name"></td>
-        <td><input type="text" name="ip_address"></td>
-        <td><input type="text" name="protocol"></td>
-        <td><input type="text" name="url"></td>
-        <td><input type="text" name="username"></td>
-        <td><input type="text" name="password"></td>
-        <td><input class="btn btn-success" type="submit" value="ADD"></td>
-    </tr>
-</table>
-</form>
-
-<hr>
 
 <p>DEVICE LIST:</p>
 
@@ -183,5 +165,4 @@ if (isset($db->result[0])) {
 </table>
 
 <?php
-include $_SERVER['DOCUMENT_ROOT'].'/include/footer.php';
-?>
+    require 'include/footer.php';
