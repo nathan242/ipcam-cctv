@@ -5,13 +5,18 @@
     foreach (camera::get_valid_properties() as $field_name) {
         $add_form->input($field_name,
                 strtoupper(preg_replace('/_/', ' ', $field_name)),
-                'text',
+                ($field_name == 'ID') ? 'hidden' : 'text',
                 true,
                 false,
                 array());
     }
     
+    $result = $add_form->handle(
+        'camera::create_camera',
+        array(&$db)
+    );
     
+    /*
     // Add
 
     if (isset($_POST['add']) && isset($_POST['name']) && isset($_POST['ip_address']) && isset($_POST['protocol']) && isset($_POST['url']) && isset($_POST['username']) && isset($_POST['password'])) {
@@ -31,6 +36,8 @@
             exit();
         }
     }
+     * 
+     */
 
     // Delete
 

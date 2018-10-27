@@ -118,12 +118,17 @@
                     echo '</tr><tr>';
                 }
             }
+            
+            $style = '';
+            if ($table && $inline) {
+                $style = ' style="width: 100%;"';
+            }
 
             foreach ($this->inputs as $k => $v) {
                 if ($v['type'] == 'select') {
                     echo $sep_start;
 
-                    echo '<strong>'.$v['display_name'].'</strong><select name="'.$k.'">';
+                    echo '<strong>'.$v['display_name'].'</strong><select name="'.$k.'"'.$style.'>';
                     foreach ($v['options']['selects'] as $sk => $sv) {
                         echo '<option value="'.$sk.'"';
                         if ($v['value'] === $sk) { echo ' selected'; }
@@ -158,7 +163,7 @@
                         echo $sep_start;
                     }
                     
-                    echo '<input type="'.$v['type'].'" name="'.$k.'"'.$extra.'>';
+                    echo '<input type="'.$v['type'].'" name="'.$k.'"'.$extra.$style.'>';
                     echo $sep_end;
                 } else {
                     $extra = '';
@@ -166,7 +171,7 @@
                     if ($v['value'] !== false) {
                         $extra .= ' value="'.$v['value'].'"';
                     }
-                    
+
                     echo '<input type="'.$v['type'].'" name="'.$k.'"'.$extra.'>';
                 }
 
