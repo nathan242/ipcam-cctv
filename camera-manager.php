@@ -2,10 +2,11 @@
     require_once 'include/inc.main.php';
     
     $add_form = new form('Add Camera', 'Add');
+    $add_form->input('add', 'add', 'hidden', false, '1');
     foreach (camera::get_valid_properties() as $field_name) {
         $add_form->input($field_name,
                 strtoupper(preg_replace('/_/', ' ', $field_name)),
-                ($field_name == 'ID') ? 'hidden' : 'text',
+                ($field_name == 'id') ? 'hidden' : 'text',
                 true,
                 false,
                 array());
@@ -15,6 +16,16 @@
         'camera::create_camera',
         array(&$db)
     );
+    
+    if ($result) {
+        if ($add_form->result) {
+            header('Location: '.$_SERVER['HTTP_REFERER']);
+            exit();
+        } else {
+            echo 'Error adding device!';
+            exit();
+        }
+    }
     
     /*
     // Add

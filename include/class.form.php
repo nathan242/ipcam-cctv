@@ -5,6 +5,8 @@
         private $submit;
         private $submit_colour;
         private $method;
+        
+        public $result;
 
         /**
          * Construct a form.
@@ -77,7 +79,9 @@
                 $input_data[$i] = $params[$i];
             }
             $pass[] = $input_data;
-            return call_user_func_array($function, $pass);
+            $this->result = call_user_func_array($function, $pass);
+            
+            return true;
         }
 
         /**
@@ -112,8 +116,11 @@
                 if ($inline) {
                     echo '<tr>';
                     foreach ($this->inputs as $v) {
-                        echo '<th>'.$v['display_name'].'</th>';
+                        if ($v['type'] != 'hidden') {
+                            echo '<th>'.$v['display_name'].'</th>';
+                        }
                     }
+                    echo '<th></th>';
                     
                     echo '</tr><tr>';
                 }
