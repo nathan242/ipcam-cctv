@@ -21,7 +21,7 @@
                 $submit = 'Submit',
                 $submit_colour = 'primary',
                 $method = 'post'
-                ) {
+        ) {
             
             $this->title = $title;
             $this->submit = $submit;
@@ -45,7 +45,8 @@
                 $type = 'text',
                 $allow_empty = false,
                 $value = false,
-                $options = array()) {
+                $options = array()
+        ) {
             
             $this->inputs[$name] = 
                     array('display_name' => $display_name,
