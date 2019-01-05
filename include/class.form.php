@@ -62,7 +62,7 @@
          * 
          * @param function $function Function to process submitted data
          * @param array $pass Array of additional parameters for function
-         * @return mixed Returns false if form not submitted, otherwise returns output of function
+         * @return bool Returns true if form submit is valid
          */
         public function handle($function, $pass = array()) {
             $params = ($this->method == 'post') ? $_POST : $_GET;

@@ -4,9 +4,11 @@
     $add_form = new form('Add Camera', 'Add');
     $add_form->input('add', 'add', 'hidden', false, '1');
     foreach (camera::get_valid_properties() as $field_name) {
+        if ('id' === $field_name) { continue; }
+
         $add_form->input($field_name,
                 strtoupper(preg_replace('/_/', ' ', $field_name)),
-                ($field_name == 'id') ? 'hidden' : 'text',
+                'text',
                 true,
                 false,
                 array());
@@ -26,7 +28,28 @@
             exit();
         }
     }
+    
+    $devices = escaper::escape_html_array(camera::get_all($db));
+    
+    $editor = new editortable('CAMERAS', 'ID');
+    $editor->handle(
+        function (&$db, $id, $field, $value) {
+            $config = new config($db, $id);
+            $camera = new camera($db, $config->config_data, $id);
+            if (false === $camera->device_data || $camera->is_active()) {
+                return false;
+            }
+            
+            $camera->device_data[strtolower($field)] = $value;
+            return $camera->update();
+        },
+        array(&$db)
+    );
+    
+    $editor->set_data($devices);
+    
 
+    /*
     // Delete
 
     if (isset($_POST['delete']) && isset($_POST['id'])) {
@@ -60,12 +83,15 @@
             exit('0');
         }
     }
+     * 
+     */
 
     $pagepath = array(array('CCTV CONTROL', '/cctv.php'), array('CAMERA MANAGER', $_SERVER['REQUEST_URI']));
     $topbar = true;
     require 'include/header.php';
     
     $add_form->html(true, true, true);
+    $editor->html();
 ?>
 
 <script>
@@ -116,10 +142,4 @@ function update(field) {
 </script>
 
 <?php
-    $devices = escaper::escape_html_array(camera::get_all($db));
-    
-    $editor = new editortable('TEST', 'ID');
-    $editor->set_data($devices);
-    $editor->html();
-
     require 'include/footer.php';

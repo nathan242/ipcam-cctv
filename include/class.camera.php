@@ -64,6 +64,7 @@ FROM
     public static function create_camera(&$db, $data, $inst = false, $config = array()) {
         $fields = self::get_valid_properties();
         foreach ($fields as $f) {
+            if ('id' === $f) { continue; }
             if (!array_key_exists($f, $data)) {
                 return false;
             }

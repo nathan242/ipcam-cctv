@@ -29,8 +29,20 @@
             $this->data = $data;
         }
         
-        public function handle() {
+        public function handle($function, $pass = array()) {
+            if (!isset($_POST['edit']) || $_POST['edit'] != 1) { return false; }
+            if (!isset($_POST[$this->key]) || $_POST[$this->key] == '') { return false; }
+            if (!isset($_POST['field']) || !isset($_POST['value'])) { return false; }
             
+            $pass[] = $_POST[$this->key];
+            $pass[] = $_POST['field'];
+            $pass[] = $_POST['value'];
+
+            if (call_user_func_array($function, $pass)) {
+                exit('0');
+            } else {
+                exit('1');
+            }
         }
         
         public function html($panel = false) {
