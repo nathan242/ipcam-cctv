@@ -17,7 +17,7 @@
             
             foreach ($data as &$row) {
                 foreach ($row as $key => &$field) {
-                    if ($key == $this->key) {
+                    if ($key === $this->key) {
                         $key_value = $field;
                         continue;
                     }
@@ -30,8 +30,8 @@
         }
         
         public function handle($function, $pass = array()) {
-            if (!isset($_POST['edit']) || $_POST['edit'] != 1) { return false; }
-            if (!isset($_POST[$this->key]) || $_POST[$this->key] == '') { return false; }
+            if (!isset($_POST['edit']) || $_POST['edit'] !== '1') { return false; }
+            if (!isset($_POST[$this->key]) || $_POST[$this->key] === '') { return false; }
             if (!isset($_POST['field']) || !isset($_POST['value'])) { return false; }
             
             $pass[] = $_POST[$this->key];

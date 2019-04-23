@@ -47,7 +47,6 @@
                 $value = false,
                 $options = array()
         ) {
-            
             $this->inputs[$name] = 
                     array('display_name' => $display_name,
                         'type' => $type,
@@ -65,7 +64,7 @@
          * @return bool Returns true if form submit is valid
          */
         public function handle($function, $pass = array()) {
-            $params = ($this->method == 'post') ? $_POST : $_GET;
+            $params = ($this->method === 'post') ? $_POST : $_GET;
 
             $input_data = array();
             $input_names = array_keys($this->inputs);
@@ -74,7 +73,7 @@
                 if (!isset($params[$i])) { return false; }
 
                 // If it is empty, is it allowed to be?
-                if ($params[$i] == '' && $this->inputs[$i]['allow_empty'] == false) { return false; }
+                if ($params[$i] === '' && $this->inputs[$i]['allow_empty'] === false) { return false; }
 
                 // Build data array
                 $input_data[$i] = $params[$i];
@@ -117,7 +116,7 @@
                 if ($inline) {
                     echo '<tr>';
                     foreach ($this->inputs as $v) {
-                        if ($v['type'] != 'hidden') {
+                        if ($v['type'] !== 'hidden') {
                             echo '<th>'.$v['display_name'].'</th>';
                         }
                     }
@@ -133,7 +132,7 @@
             }
 
             foreach ($this->inputs as $k => $v) {
-                if ($v['type'] == 'select') {
+                if ($v['type'] === 'select') {
                     echo $sep_start;
 
                     echo '<strong>'.$v['display_name'].'</strong><select name="'.$k.'"'.$style.'>';
@@ -145,7 +144,7 @@
                     echo '</select>';
 
                     echo $sep_end;
-                } elseif ($v['type'] != 'hidden') {
+                } elseif ($v['type'] !== 'hidden') {
                     $extra = '';
                     
                     if ($v['value'] !== false) {

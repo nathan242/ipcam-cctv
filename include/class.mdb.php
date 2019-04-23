@@ -1,7 +1,6 @@
 <?php
 
 class mdb {
-
     public $address;
     public $user;
     public $pass;
@@ -9,15 +8,15 @@ class mdb {
     public $port;
     public $socket;
 
-    public $debug_print = 0;
-    public $debug_log = 0;
+    public $debug_print = false;
+    public $debug_log = false;
 
-    public $keep_connected = 1;
+    public $keep_connected = true;
     public $result;
 
     private $dbobj;
-    private $is_connected = 0;
-    private $transaction_open = 0;
+    private $is_connected = false;
+    private $transaction_open = false;
     private $qresult;
     private $stmt;
 
@@ -39,7 +38,6 @@ class mdb {
         $this->db = $db;
         $this->port = $port;
         $this->socket = $socket;
-
     }
 
     /**
@@ -48,10 +46,10 @@ class mdb {
      * @return boolean
      */
     public function connect() {
-        if ($this->is_connected == 0) {
+        if (!$this->is_connected) {
             if ($this->dbobj = new mysqli($this->address, $this->user, $this->pass, $this->db, $this->port, $this->socket)) {
-                $this->is_connected = 1;
-                $this->transaction_open = 0;
+                $this->is_connected = true;
+                $this->transaction_open = false;
                 //TODO: Else, throw error
             } else {
                 return false;
@@ -66,11 +64,12 @@ class mdb {
      * @return boolean
      */
     public function disconnect() {
-        if ($this->is_connected == 1) {
+        if ($this->is_connected) {
             $this->dbobj->close();
-            $this->is_connected = 0;
-            $this->transaction_open = 0;
+            $this->is_connected = false;
+            $this->transaction_open = false;
         }
+
         return true;
     }
 
@@ -78,7 +77,7 @@ class mdb {
      * Disconnect from the DB server if set to not remain connected or a transaction is not open
      */
     private function disconnect_if_allowed() {
-        if ($this->keep_connected == 0 and $this->transaction_open == 0) {
+        if (!$this->keep_connected && !$this->transaction_open) {
             $this->disconnect(); 
         }
     }
@@ -177,9 +176,7 @@ class mdb {
             $names = array();
             while ($field = $meta->fetch_field()) {
                 $name = $field->name;
-                //$$name = null;
                 $names[$name] = null;
-                //$result[$field->name] = &$$name;
                 $result[$field->name] = &$names[$name];
             }
             call_user_func_array(array($this->stmt, 'bind_result'), $result);
@@ -202,7 +199,7 @@ class mdb {
     public function start_transaction() {
         $this->connect();
         $this->dbobj->begin_transaction();
-        $this->transaction_open = 1;
+        $this->transaction_open = true;
     }
 
     /**
@@ -210,7 +207,7 @@ class mdb {
      */
     public function commit() {
         $this->dbobj->commit();
-        $this->transaction_open = 0;
+        $this->transaction_open = false;
         $this->disconnect_if_allowed();
     }
 
@@ -219,7 +216,7 @@ class mdb {
      */
     public function rollback() {
         $this->dbobj->rollback();
-        $this->transaction_open = 0;
+        $this->transaction_open = false;
         $this->disconnect_if_allowed();
     }
 
@@ -248,14 +245,14 @@ class mdb {
      * @param string $data Data to output
      */
     private function debug_print($data) {
-        if ($this->debug_print > 0) {
+        if ($this->debug_print) {
             if (php_sapi_name() === 'cli') {
                 echo "DEBUG: [ ".$data." ]\n";
             } else {
                 echo "<pre>DEBUG: [ ".$data." ]</pre>";
             }
         }
-        if ($this->debug_log > 0) {
+        if ($this->debug_log) {
             error_log("DEBUG: [ ".$data." ]\n");
         }
     }
