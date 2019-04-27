@@ -110,40 +110,40 @@
             'text'    => 'START',
             'path'    => 'control.php?action=start',
             'key'     => 'camera',
-            'vkey'    => 'NAME',
+            'vkey'    => 'name',
             'colour'  => 'success'
         ),
         array(
             'text'    => 'STOP',
             'path'    => 'control.php?action=stop',
             'key'     => 'camera',
-            'vkey'    => 'NAME',
+            'vkey'    => 'name',
             'colour'  => 'danger'
         ),
         array(
             'text'    => 'RELOAD',
             'path'    => 'control.php?action=reload',
             'key'     => 'camera',
-            'vkey'    => 'NAME',
+            'vkey'    => 'name',
             'colour'  => 'warning'
         ),
         array(
             'text'    => 'LIVE',
-            'vkey'    => 'NAME',
+            'vkey'    => 'name',
             'options' => array(
                 'onclick' => 'window.open(\'liveview.php?camera={vkey}\', \'{vkey}\', \'height=500, menubar=no, status=no, toolbar=no, width=660, location=no, scrollbars=no\');'
             )
         ),
         array(
             'text'    => 'RECORDINGS',
-            'vkey'    => 'NAME',
+            'vkey'    => 'name',
             'options' => array(
                 'onclick' => 'window.open(\'recording-viewer.php?camera={vkey}\', \'{vkey}\', \'height=500, menubar=no, status=no, toolbar=no, width=660, location=no, scrollbars=yes\');'
             )
         ),
         array(
             'text'    => 'LOG',
-            'vkey'    => 'NAME',
+            'vkey'    => 'name',
             'options' => array(
                 'onclick' => 'window.open(\'viewlog.php?camera={vkey}\', \'{vkey}\', \'height=700, menubar=no, status=no, toolbar=no, width=800, location=no, scrollbars=yes\');'
             )
@@ -151,7 +151,7 @@
         array(
             'text'    => 'WEB',
             'path'    => 'http://{vkey}/',
-            'vkey'    => 'IP ADDRESS',
+            'vkey'    => 'ip_address',
             'options' => array(
                 'target' => '_blank'
             )
