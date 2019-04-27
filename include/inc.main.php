@@ -18,7 +18,7 @@
     $dbdb = 'ipcam';
 
     $db = new mdb($dbhost, $dbuser, $dbpass, $dbdb);
-    //$db->debug_print = 1;
+    //$db->debug_print = true;
 
     // Check user
     if (!isset($page_no_login) || $page_no_login === false) {

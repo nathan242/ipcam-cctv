@@ -367,7 +367,7 @@ VALUES (?, ?, ?)',
                 array('i', 's', 'i'),
                 array($this->id, $event, $status))) {
             echo 'ERROR: Failed to insert into camera_log. ('
-                .$this->id.', '.$event.', '.$status.')\nMYSQL_ERROR: '
+                .$this->id.', '.$event.', '.$status.")\nMYSQL_ERROR: "
                 .$this->db->last_error()."\n";
         }
         
@@ -398,8 +398,8 @@ LIMIT '.$logdelete);
             $after = false,
             $before = false,
             $status = false,
-            $limit = false) {
-        
+            $limit = false
+    ) { 
         $where = '';
         $wheretype = array();
         $wheredata = array();
