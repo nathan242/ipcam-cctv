@@ -74,6 +74,12 @@
 
 <?php
     $devices = escaper::escape_html_array(camera::get_all($db));
+    $headings = [];
+    foreach (camera::get_valid_properties() as $heading) {
+        $headings[] = strtoupper(preg_replace('/_/', ' ', $heading));
+    }
+    $headings[] = 'STATUS';
+    $headings[] = 'CONTROLS';
     
     // Add device status
     foreach ($devices as &$device) {
@@ -99,7 +105,7 @@
     echo '<p>';
     gui::button('EDIT CAMERAS', '/camera-manager.php');
     echo '</p>';
-    gui::table($devices, false, array(
+    gui::table($devices, $headings, false, array(
         array(
             'text'    => 'START',
             'path'    => 'control.php?action=start',

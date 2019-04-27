@@ -23,21 +23,28 @@
          * Output a bootstrap table.
          * 
          * @param array $data Array containing table data
+         * @param array|boolean $headings Optional array of table headers
          * @param array|boolean $select Configuration array for table row link
          * @param array|boolean $buttons Configuration array for table row buttons
          * @return boolean False if no table data
          */
-        public static function table($data, $select = false, $buttons = false) {
+        public static function table($data, $headings = false, $select = false, $buttons = false) {
             if (!is_array($data) || !isset($data[0])) { return false; }
 
             echo '<table class="table table-hover">';
 
             // Headings
             echo '<tr>';
-            echo '<th>'.implode('</th><th>', array_keys($data[0])).'</th>';
+            if (is_array($headings)) {
+                echo '<th>'.implode('</th><th>', $headings).'</th>';
+            } else {
+                echo '<th>'.implode('</th><th>', array_keys($data[0])).'</th>';
+            }
+            
             if (is_array($buttons)) {
                 echo '<th></th>';
             }
+            
             echo '</tr>';
 
             // Data

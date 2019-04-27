@@ -32,18 +32,7 @@ class camera {
      * @return boolean|array
      */
     public static function get_all(&$db) {
-        if (!$db->query(
-'SELECT
-    `id` AS `ID`,
-    `name` AS `NAME`,
-    `ip_address` AS `IP ADDRESS`,
-    `protocol` AS `PROTOCOL`,
-    `url` AS `URL`,
-    `username` AS `USERNAME`,
-    `password` AS `PASSWORD`
-FROM
-    `devices`'
-                )
+        if (!$db->query('SELECT * FROM `devices`')
                 || !isset($db->result[0])
                 ) {
             return false;
