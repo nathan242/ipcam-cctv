@@ -2,7 +2,8 @@
     // Main include file
 
     // Start a session if we are not running from CLI
-    if (php_sapi_name() != 'cli') {
+    $is_cli = php_sapi_name() === 'cli';
+    if (!$is_cli) {
         session_start();
     }
     
@@ -21,6 +22,6 @@
     //$db->debug_print = true;
 
     // Check user
-    if (!isset($page_no_login) || $page_no_login === false) {
+    if (!$is_cli && (!isset($page_no_login) || $page_no_login === false)) {
         user::check_logged_in($db);
     }
