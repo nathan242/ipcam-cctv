@@ -100,7 +100,7 @@
             
             $pass[] = $_POST[$this->key];
             
-            if (call_user_func_array($function, $pass));
+            call_user_func_array($function, $pass);
             header('Location: '.$_SERVER['HTTP_REFERER']);
             exit();
         }

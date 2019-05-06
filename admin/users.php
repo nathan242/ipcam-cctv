@@ -1,8 +1,8 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'].'/include/main.php');
-$pagepath = array(array('CCTV CONTROL', '/cctv.php'), array('ADMIN SETTINGS', '/admin/'), array('USER MANAGER', $_SERVER['REQUEST_URI']));
-$topbar = true;
-include $_SERVER['DOCUMENT_ROOT'].'/include/header.php';
+    require_once '../include/inc.main.php';
+    $pagepath = array(array('CCTV CONTROL', '/cctv.php'), array('ADMIN SETTINGS', '/admin/'), array('USER MANAGER', $_SERVER['REQUEST_URI']));
+    $topbar = true;
+    require '../include/header.php';
 ?>
 
 <script>
@@ -31,41 +31,29 @@ function remove(id) {
 }
 </script>
 
-<p><a class="btn btn-default" href="index.php">&lt&ltBACK</a></p>
-<p>USERS:</p>
-<input type="hidden" name="set_enable" value="1">
-<table class="table table-hover">
-    <tr>
-        <th>ID</th>
-        <th>USERNAME</th>
-        <th>PASSWORD</th>
-        <th>ENABLED</th>
-        <th colspan=2>ACTIONS</th>
-    </tr>
-
 <?php
 
-$db->query('select id, username, password, enabled from users');
-foreach ($db->result as $row) {
-    echo '<tr>';
-    echo '<td>'.$row['id'].'</td>';
-    echo '<td>'.$row['username'].'</td>';
-    echo '<td>'.$row['password'].'</td>';
-    if ($row['enabled']==1) {
-        echo '<td><input type="checkbox" id="enabled" checked disabled></td>';
-    } else {
-        echo '<td><input type="checkbox" id="enabled" disabled></td>';
-    }
-    echo '<td><a class="btn btn-info" href="edituser.php?id='.$row['id'].'">EDIT</a></td>';
-    echo '<td><a class="btn btn-danger" href="#" onclick="remove('.$row['id'].')">DELETE</a></td>';
-    echo '</tr>';
-}
-?>
+    $db->query('select id, username, password, enabled from users');
 
-</table>
+    ob_start();
+    gui::table($db->result, ['ID', 'USERNAME', 'PASSWORD HASH', 'ENABLED'], false, [
+        [
+            'text'    => 'EDIT',
+            'path'    => 'edituser.php',
+            'key'     => 'id',
+            'vkey'    => 'id'
+        ],
+        [
+            'text'    => 'DELETE',
+            'vkey'    => 'id',
+            'colour'  => 'danger',
+            'options' => [
+                'onclick' => 'remove(\'{vkey}\');'
+            ]
+        ]
+    ]);
+    gui::button('CREATE USER', 'edituser.php?new=1', 'info');
+    gui::panel('Users', ob_get_clean());
 
-<p><a class="btn btn-info" href="edituser.php?new=1">CREATE USER</a></p>
-
-<?php
-include $_SERVER['DOCUMENT_ROOT'].'/include/footer.php';
+    require '../include/footer.php';
 ?>
